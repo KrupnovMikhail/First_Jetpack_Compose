@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
@@ -46,6 +47,7 @@ class MainActivity : ComponentActivity() {
                         .background(MaterialTheme.colors.background)
                 ) {
                     InstagramProfileCard()
+//                    TestText()
                 }
 
             }
@@ -57,10 +59,22 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 fun TestText() {
-    Image(
-        modifier = Modifier.clip(CircleShape),
-        painter = painterResource(id = R.drawable.ic_launcher_background),
-        contentDescription = "",
-        contentScale = ContentScale.FillHeight
-    )
+    Box(
+        modifier = Modifier
+            .size(200.dp)
+            .background(Color.Cyan)
+    ) {
+        Image(
+            modifier = Modifier
+                .background(Color.Green)
+                .padding(25.dp)
+                .clip(CircleShape)
+                .size(100.dp)
+                .background(Color.Red)
+                .padding(25.dp),
+            painter = ColorPainter(Color.Yellow),
+            contentDescription = "",
+            contentScale = ContentScale.FillHeight
+        )
+    }
 }
