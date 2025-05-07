@@ -1,13 +1,13 @@
 package com.krupnov.firstcomposeproject
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -42,17 +42,41 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         setContent {
-            FirstComposeProjectTheme {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colors.background)
-                ) {
-                    InstagramProfileCard(viewModel)
-                }
-
-            }
-
+            Test(viewModel = viewModel)
         }
     }
 }
+
+@Composable
+fun Test(viewModel: MainViewModel) {
+    FirstComposeProjectTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colors.background)
+        ) {
+            LazyColumn {
+                item {
+                    Text(text = "Title")
+                }
+                items(10) {
+                    InstagramProfileCard(viewModel = viewModel)
+                }
+                item { 
+                    Image(painter = painterResource(id = R.drawable.ic_instagram), contentDescription = null)
+                }
+                items(500) {
+                    InstagramProfileCard(viewModel)
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
