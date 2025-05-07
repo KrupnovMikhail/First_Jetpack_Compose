@@ -1,5 +1,6 @@
 package com.krupnov.firstcomposeproject.ui.theme
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -7,11 +8,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,7 +28,9 @@ import com.krupnov.firstcomposeproject.R
 fun InstagramProfileCard(
     viewModel: MainViewModel
 ) {
+    Log.d("RECOMPOSITION", "InstagramProfileCard")
     val isFollowed = viewModel.isFollowing.observeAsState(false)
+
     Card(
         modifier = Modifier.padding(8.dp),
         backgroundColor = MaterialTheme.colors.background,
@@ -40,6 +40,7 @@ fun InstagramProfileCard(
         ),
         border = BorderStroke(1.dp, MaterialTheme.colors.onBackground)
     ) {
+        Log.d("RECOMPOSITION", "Card")
         Column(
             modifier = Modifier
                 .padding(16.dp)
@@ -76,7 +77,7 @@ fun InstagramProfileCard(
                 text = "www.facebook.com/emotional_health",
                 fontSize = 14.sp,
             )
-            FollowButton(isFollowed = isFollowed.value) {
+            FollowButton(isFollowed = isFollowed) {
                 viewModel.changeFollowingStatus()
             }
         }
@@ -85,20 +86,21 @@ fun InstagramProfileCard(
 
 @Composable
 private fun FollowButton(
-    isFollowed: Boolean,
+    isFollowed: State<Boolean>,
     clickListener: () -> Unit
 ) {
+    Log.d("RECOMPOSITION", "FollowButton")
     Button(
         onClick = { clickListener() },
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = if (isFollowed) {
+            backgroundColor = if (isFollowed.value) {
                 MaterialTheme.colors.primary.copy(alpha = 0.5f)
             } else {
                 MaterialTheme.colors.primary
             }
         )
     ) {
-        val text = if (isFollowed) {
+        val text = if (isFollowed.value) {
             "Unfollow"
         } else {
             "Follow"
