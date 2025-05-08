@@ -6,8 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,6 +14,7 @@ import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,6 +47,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Test(viewModel: MainViewModel) {
     FirstComposeProjectTheme {
@@ -55,18 +56,15 @@ fun Test(viewModel: MainViewModel) {
                 .fillMaxSize()
                 .background(MaterialTheme.colors.background)
         ) {
-            LazyColumn {
-                item {
-                    Text(text = "Title")
-                }
-                items(10) {
-                    InstagramProfileCard(viewModel = viewModel)
-                }
-                item { 
-                    Image(painter = painterResource(id = R.drawable.ic_instagram), contentDescription = null)
-                }
-                items(500) {
-                    InstagramProfileCard(viewModel)
+            val models = viewModel.models.observeAsState(listOf())
+            LazyVerticalGrid(cells = GridCells.Fixed(2)) {
+                items(models.value) { model ->
+                    InstagramProfileCard(
+                        model = model,
+                        onFollowedButtonClickListener = {
+                            viewModel.changeFollowingStatus(it)
+                        }
+                    )
                 }
             }
         }
