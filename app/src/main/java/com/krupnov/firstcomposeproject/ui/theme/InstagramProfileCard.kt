@@ -21,16 +21,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.krupnov.firstcomposeproject.InstagramModel
 import com.krupnov.firstcomposeproject.MainViewModel
 import com.krupnov.firstcomposeproject.R
 
 @Composable
 fun InstagramProfileCard(
-    viewModel: MainViewModel
+    model: InstagramModel,
+    onFollowedButtonClickListener: (InstagramModel) -> Unit
 ) {
-    Log.d("RECOMPOSITION", "InstagramProfileCard")
-    val isFollowed = viewModel.isFollowing.observeAsState(false)
-
     Card(
         modifier = Modifier.padding(8.dp),
         backgroundColor = MaterialTheme.colors.background,
@@ -65,20 +64,20 @@ fun InstagramProfileCard(
                 UserStatistics(title = "Following", value = "76")
             }
             Text(
-                text = "Instagram",
+                text = "Instagram ${model.id}",
                 fontSize = 32.sp,
                 fontFamily = FontFamily.Cursive
             )
             Text(
-                text = "#YoursToMake",
+                text = "#${model.title}",
                 fontSize = 14.sp,
             )
             Text(
                 text = "www.facebook.com/emotional_health",
                 fontSize = 14.sp,
             )
-            FollowButton(isFollowed = isFollowed) {
-                viewModel.changeFollowingStatus()
+            FollowButton(isFollowed = model.isFollowed) {
+                onFollowedButtonClickListener(model)
             }
         }
     }
@@ -86,21 +85,21 @@ fun InstagramProfileCard(
 
 @Composable
 private fun FollowButton(
-    isFollowed: State<Boolean>,
+    isFollowed: Boolean,
     clickListener: () -> Unit
 ) {
     Log.d("RECOMPOSITION", "FollowButton")
     Button(
         onClick = { clickListener() },
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = if (isFollowed.value) {
+            backgroundColor = if (isFollowed) {
                 MaterialTheme.colors.primary.copy(alpha = 0.5f)
             } else {
                 MaterialTheme.colors.primary
             }
         )
     ) {
-        val text = if (isFollowed.value) {
+        val text = if (isFollowed) {
             "Unfollow"
         } else {
             "Follow"
