@@ -10,11 +10,10 @@ import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
 import com.krupnov.firstcomposeproject.ui.theme.FirstComposeProjectTheme
 import com.krupnov.firstcomposeproject.ui.theme.InstagramProfileCard
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun Test(viewModel: MainViewModel) {
     FirstComposeProjectTheme {
@@ -57,14 +57,38 @@ fun Test(viewModel: MainViewModel) {
                 .background(MaterialTheme.colors.background)
         ) {
             val models = viewModel.models.observeAsState(listOf())
-            LazyVerticalGrid(cells = GridCells.Fixed(2)) {
-                items(models.value) { model ->
-                    InstagramProfileCard(
-                        model = model,
-                        onFollowedButtonClickListener = {
-                            viewModel.changeFollowingStatus(it)
+            LazyColumn {
+                items(models.value, key = { it.id }) { model ->
+                    val dismissState = rememberDismissState()
+                    if (dismissState.isDismissed(DismissDirection.EndToStart)) {
+                        viewModel.delete(model)
+                    }
+                    SwipeToDismiss(
+                        state = dismissState,
+                        directions = setOf(DismissDirection.EndToStart),
+                        background = {
+                            Box(
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .background(Color.Red.copy(alpha = 0.5f))
+                                    .fillMaxSize(),
+                                contentAlignment = Alignment.CenterEnd
+                            ) {
+                                Text(
+                                    modifier = Modifier.padding(16.dp),
+                                    text = "Delete item",
+                                    fontSize = 24.sp
+                                )
+                            }
                         }
-                    )
+                    ) {
+                        InstagramProfileCard(
+                            model = model,
+                            onFollowedButtonClickListener = {
+                                viewModel.changeFollowingStatus(it)
+                            }
+                        )
+                    }
                 }
             }
         }
